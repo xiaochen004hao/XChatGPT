@@ -111,8 +111,8 @@ def getPath(filename):
 
 
 dt01 = datetime.today()
-MSWindowsFixedSizeDialogHint = Qt.WindowFlags.MSWindowsFixedSizeDialogHint
-FramelessWindowHint = Qt.WindowFlags.FramelessWindowHint
+MSWindowsFixedSizeDialogHint = Qt.WindowType.MSWindowsFixedSizeDialogHint
+FramelessWindowHint = Qt.WindowType.FramelessWindowHint
 
 
 def changeData(k, v, path=getPath('data.json')):
@@ -247,7 +247,7 @@ class XesUploaderWin(QWidget, Ui_XesUploader):
 class ICON(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowFlags(Qt.WindowFlags.WindowStaysOnTopHint | FramelessWindowHint)
+        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
 
         layout = QVBoxLayout()
@@ -325,32 +325,32 @@ class ICON(QWidget):
         self.move((screen.width() - size.width()) // 2, (screen.height() - size.height()) // 2)
 
     def mousePressEvent(self, e):
-        if e.button() == Qt.MouseButtons.LeftButton:
+        if e.button() == Qt.MouseButton.LeftButton:
             print('uleft')
             # self.dp_x = e.globalPosition() - self.pos()
             self.dp_x = e.globalPosition().x()
             self.dp_y = e.globalPosition().y()
             self.isMove = False
-        elif e.button() == Qt.MouseButtons.RightButton:
+        elif e.button() == Qt.MouseButton.RightButton:
             print('uright')
-        elif e.button() == Qt.MouseButtons.MiddleButton:
+        elif e.button() == Qt.MouseButton.MiddleButton:
             print('umiddle')
 
     def mouseReleaseEvent(self, e):
-        if e.button() == Qt.MouseButtons.LeftButton:
+        if e.button() == Qt.MouseButton.LeftButton:
             print('dleft')
             if not self.isMove:
                 ui.MaxWindow()
             self.isMove = False
 
-        elif e.button() == Qt.MouseButtons.RightButton:
+        elif e.button() == Qt.MouseButton.RightButton:
             print('dright')
-        elif e.button() == Qt.MouseButtons.MiddleButton:
+        elif e.button() == Qt.MouseButton.MiddleButton:
             print('dmiddle')
             self.close()
 
     def mouseMoveEvent(self, e):
-        if Qt.MouseButtons.LeftButton:
+        if Qt.MouseButton.LeftButton:
             self.isMove = True
             print('xmove')
             self.move(int(self.x() + (e.globalPosition().x() - self.dp_x)),
@@ -360,19 +360,20 @@ class ICON(QWidget):
             print(self.pos())
 
 
-def translate(text):
-    text = text.strip()
-    if text == "":
+def translate(texts):
+    texts = texts.strip()
+    if texts == "":
         return ""
 
     print("语言服务正在处理中，请耐心等待...")
 
-    params = {"text": text}
+    params = {"text": texts}
     cookies = ""
     if len(sys.argv) > 1:
         try:
             cookies = json.loads(sys.argv[1])["cookies"]
-        except:
+        except TypeError as e:
+            print(f"错误: {e}")
             pass
     headers = {"Cookie": cookies}
     rep = requests.get("https://code.xueersi.com/api/ai/python_tts/translate", params=params, headers=headers)
@@ -869,26 +870,26 @@ class Main(QMainWindow, Ui_MainWindow):
 
     def mousePressEvent(self, e):
         # apply_stylesheet(app, theme=getData_k('style'))  ---防卡---
-        if e.button() == Qt.MouseButtons.LeftButton:
+        if e.button() == Qt.MouseButton.LeftButton:
             print('uleft')
             # self.dp_x = e.globalPosition() - self.pos()
             self.dp_x = e.globalPosition().x()
             self.dp_y = e.globalPosition().y()
-        elif e.button() == Qt.MouseButtons.RightButton:
+        elif e.button() == Qt.MouseButton.RightButton:
             print('uright')
-        elif e.button() == Qt.MouseButtons.MiddleButton:
+        elif e.button() == Qt.MouseButton.MiddleButton:
             print('umiddle')
 
     def mouseReleaseEvent(self, e):
-        if e.button() == Qt.MouseButtons.LeftButton:
+        if e.button() == Qt.MouseButton.LeftButton:
             print('dleft')
-        elif e.button() == Qt.MouseButtons.RightButton:
+        elif e.button() == Qt.MouseButton.RightButton:
             print('dright')
-        elif e.button() == Qt.MouseButtons.MiddleButton:
+        elif e.button() == Qt.MouseButton.MiddleButton:
             print('dmiddle')
 
     def mouseMoveEvent(self, e):
-        if Qt.MouseButtons.LeftButton:
+        if Qt.MouseButton.LeftButton:
             print('xmove')
             self.move(int(self.x() + (e.globalPosition().x() - self.dp_x)),
                       int(self.y() + (e.globalPosition().y() - self.dp_y)))
@@ -931,7 +932,7 @@ class Main(QMainWindow, Ui_MainWindow):
                 self.xeshomeURL.setText(self.xeshomeURL.text() + '-网址无效！！！')
 
     def mouseClickMBox(self, event):
-        if Qt.MouseButtons.LeftButton:
+        if Qt.MouseButton.LeftButton:
             self.mouseClickMoveBox = True
 
     def windowUpdate(self):
@@ -959,7 +960,7 @@ class CoverWindow(QWidget):
         self.baseWindow = base_window
 
         self.setWindowFlags(
-            MSWindowsFixedSizeDialogHint | Qt.WindowFlags.WindowStaysOnTopHint | FramelessWindowHint | Qt.WindowFlags.Tool)
+            MSWindowsFixedSizeDialogHint | Qt.WindowType.WindowStaysOnTopHint | FramelessWindowHint | Qt.WindowType.Tool)
 
         # 设置窗口大小为图片大小
         self.resize(671, 414)
@@ -968,7 +969,7 @@ class CoverWindow(QWidget):
         pixmap = QPixmap(getPath("cover.png"))
         self.label = QLabel(self)
         self.label.setGeometry(QRect(0, 0, self.width(), self.height()))
-        self.label.setAlignment(Qt.Alignment.AlignCenter)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setScaledContents(True)
         self.label.setPixmap(pixmap)
 
